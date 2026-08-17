@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 92" role="img" aria-labelledby="title">
+  <title id="title">EnBandeja</title>
+  <g transform="translate(4 6)">
+    <path fill="#17385F" d="M13 8h31v11H25v8h17v10H25v9h19v11H13z"/>
+    <path fill="#E8794F" fill-rule="evenodd" d="M49 8h20c10 0 16 5 16 13 0 5-3 9-7 11 6 2 9 6 9 12 0 9-7 13-18 13H49zm12 10v10h8c3 0 5-2 5-5s-2-5-5-5zm0 20v9h9c4 0 6-2 6-5s-2-4-6-4z"/>
+    <path fill="#17385F" d="M8 61h80c-2 8-8 12-17 12H25C16 73 10 69 8 61Z"/>
+  </g>
+  <text x="111" y="62" fill="#17385F" font-family="Lexend, Arial, sans-serif" font-size="45" font-weight="600" letter-spacing="-1.8">EnBandeja</text>
+</svg>

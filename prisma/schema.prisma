@@ -1,0 +1,31 @@
+// Esquema Prisma para la landing de EnBandeja.
+// La tabla `leads` ya existe en Supabase (creada por migración
+// `create_leads_table`) — este esquema la mapea, no la crea.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Lead {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  nombre        String
+  casinoColegio String   @map("casino_colegio")
+  ciudad        String
+  email         String
+  whatsapp      String
+  gestionActual String   @map("gestion_actual")
+  origen        String   @default("landing-enbandeja")
+  estado        String   @default("nuevo")
+  ipHash        String?  @map("ip_hash")
+
+  @@index([email, createdAt(sort: Desc)], map: "leads_email_created_at_idx")
+  @@index([ipHash, createdAt(sort: Desc)], map: "leads_ip_hash_created_at_idx")
+  @@map("leads")
+}

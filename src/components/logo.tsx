@@ -1,0 +1,3 @@
+export function Logo({ className = "" }: { className?: string }) {
+  return <span className={`inline-flex items-center gap-2.5 ${className}`}><svg viewBox="0 0 88 70" className="h-9 w-11" aria-hidden="true"><path d="M6 4h34v12H19v8h19v11H19v9h22v12H6z" className="fill-brand-900"/><path d="M45 4h21c12 0 18 6 18 14 0 6-3 10-9 12 7 2 11 7 11 14 0 9-7 14-20 14H45zm13 12v10h8c4 0 6-2 6-5s-2-5-6-5zm0 21v10h9c4 0 7-2 7-5s-3-5-7-5z" className="fill-warm-600"/><path d="M2 61h86c-3 6-9 9-18 9H20C11 70 5 67 2 61Z" className="fill-brand-900"/></svg><span className="font-display text-xl font-semibold tracking-[-0.035em] text-brand-900">EnBandeja</span></span>;
+}

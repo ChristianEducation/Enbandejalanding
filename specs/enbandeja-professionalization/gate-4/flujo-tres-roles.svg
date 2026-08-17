@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <clipPath id="phone"><rect x="70" y="176" width="330" height="650" rx="26"/></clipPath>
+    <clipPath id="admin"><rect x="488" y="176" width="470" height="294" rx="18"/></clipPath>
+    <clipPath id="kitchen"><rect x="1060" y="436" width="470" height="294" rx="18"/></clipPath>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#17385f" flood-opacity=".13"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0 12 6 0 12Z" fill="#e8794f"/></marker>
+  </defs>
+  <rect width="1600" height="900" fill="#f7f3e9"/>
+  <path d="M0 0H1600V72H0Z" fill="#17385f"/>
+  <text x="70" y="48" fill="#f7f3e9" font-family="Arial,sans-serif" font-size="22" font-weight="700">EnBandeja · flujo de demostración</text>
+  <text x="70" y="126" fill="#17385f" font-family="Arial,sans-serif" font-size="38" font-weight="700">Una operación coordinada de principio a fin</text>
+
+  <g filter="url(#shadow)"><rect x="56" y="162" width="358" height="678" rx="34" fill="#17385f"/><rect x="70" y="176" width="330" height="650" rx="26" fill="#fff"/></g>
+  <image href="portal-apoderado-9x19.png" x="70" y="176" width="330" height="650" preserveAspectRatio="xMidYMin slice" clip-path="url(#phone)"/>
+  <circle cx="235" cy="808" r="5" fill="#e8794f"/>
+  <text x="70" y="874" fill="#17385f" font-family="Arial,sans-serif" font-size="20" font-weight="700">01 · Apoderado</text>
+
+  <g filter="url(#shadow)"><rect x="474" y="162" width="498" height="322" rx="24" fill="#17385f"/><rect x="488" y="176" width="470" height="294" rx="18" fill="#fff"/></g>
+  <image href="administracion-16x10.png" x="488" y="176" width="470" height="294" preserveAspectRatio="xMidYMin slice" clip-path="url(#admin)"/>
+  <text x="488" y="520" fill="#17385f" font-family="Arial,sans-serif" font-size="20" font-weight="700">02 · Administración</text>
+  <text x="488" y="550" fill="#556a7e" font-family="Arial,sans-serif" font-size="16">Visión común para la operación</text>
+
+  <g filter="url(#shadow)"><rect x="1046" y="422" width="498" height="322" rx="24" fill="#17385f"/><rect x="1060" y="436" width="470" height="294" rx="18" fill="#fff"/></g>
+  <image href="cocina-16x10.png" x="1060" y="436" width="470" height="294" preserveAspectRatio="xMidYMin slice" clip-path="url(#kitchen)"/>
+  <text x="1060" y="780" fill="#17385f" font-family="Arial,sans-serif" font-size="20" font-weight="700">03 · Cocina</text>
+  <text x="1060" y="810" fill="#556a7e" font-family="Arial,sans-serif" font-size="16">Prepara, entrega y actualiza el estado</text>
+
+  <path d="M420 338C445 338 454 320 474 320" fill="none" stroke="#e8794f" stroke-width="6" marker-end="url(#arrow)"/>
+  <path d="M978 420C1010 420 1018 548 1044 548" fill="none" stroke="#e8794f" stroke-width="6" marker-end="url(#arrow)"/>
+  <g transform="translate(500 625)"><rect width="455" height="138" rx="18" fill="#e8f0f6"/><circle cx="58" cy="69" r="30" fill="#8dd2aa"/><path d="m43 69 10 10 20-23" fill="none" stroke="#17385f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><text x="108" y="47" fill="#17385f" font-family="Arial,sans-serif" font-size="18" font-weight="700"><tspan x="108">Una visión compartida</tspan><tspan x="108" dy="23">de principio a fin</tspan></text><text x="108" y="102" fill="#556a7e" font-family="Arial,sans-serif" font-size="15">Cada equipo trabaja desde su perspectiva.</text></g>
+</svg>

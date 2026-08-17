@@ -1,0 +1,59 @@
+import type { Metadata, Viewport } from "next";
+import { Lexend, Source_Sans_3 } from "next/font/google";
+import "./globals.css";
+
+const lexend = Lexend({
+  subsets: ["latin"],
+  variable: "--font-lexend",
+  display: "swap",
+});
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans",
+  display: "swap",
+});
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+const title = "EnBandeja — Plataforma para alimentación escolar";
+const description =
+  "Conecta familias, cocina, administración y finanzas en una plataforma modular configurada alrededor de tu operación de alimentación escolar.";
+
+export const metadata: Metadata = {
+  ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    type: "website",
+    locale: "es_CL",
+    siteName: "EnBandeja",
+    images: [{ url: "/assets/open-graph.png", width: 1200, height: 630, alt: "EnBandeja: pedidos, pagos y cocina en un solo flujo" }],
+    ...(siteUrl ? { url: siteUrl } : {}),
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/assets/open-graph.png"],
+  },
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#17385f",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="es" className={`${lexend.variable} ${sourceSans.variable}`}>
+      <body>{children}</body>
+    </html>
+  );
+}
