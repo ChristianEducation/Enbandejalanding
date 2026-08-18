@@ -6,40 +6,52 @@ import {
   leadSchema,
   validateField,
   sanitizeOrigen,
+  extractUtm,
   type LeadFieldName,
 } from "@/lib/lead-schema";
+import { track } from "@/lib/analytics";
 
 type FieldErrors = Partial<Record<LeadFieldName, string>>;
 type Status = "idle" | "loading" | "success" | "error";
 
 const EMPTY = {
   nombre: "",
-  casinoColegio: "",
-  ciudad: "",
+  empresa: "",
   email: "",
   whatsapp: "",
-  gestionActual: "",
+  cantidadColegios: "1",
+  mensaje: "",
 };
 
 export function LeadForm() {
-  const [values, setValues] = useState<Record<LeadFieldName, string>>(EMPTY);
+  const [values, setValues] = useState<Record<Exclude<LeadFieldName, "tieneCafeteria">, string>>(
+    EMPTY,
+  );
+  const [tieneCafeteria, setTieneCafeteria] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
+  const startedRef = useRef(false);
 
-  function setValue(name: LeadFieldName, value: string) {
+  function markStarted() {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      track("lead_form_start");
+    }
+  }
+
+  function setValue(name: Exclude<LeadFieldName, "tieneCafeteria">, value: string) {
+    markStarted();
     setValues((v) => ({ ...v, [name]: value }));
-    // Si el campo ya tenía error, revalidar al tipear para que el
-    // mensaje desaparezca apenas quede bien.
     if (errors[name]) {
       setErrors((e) => ({ ...e, [name]: validateField(name, value) ?? undefined }));
     }
   }
 
-  function handleBlur(name: LeadFieldName) {
-    if (values[name].trim() === "") return; // no marcar error antes de intentar
+  function handleBlur(name: Exclude<LeadFieldName, "tieneCafeteria">) {
+    if (values[name].trim() === "" && name !== "mensaje") return;
     setErrors((e) => ({ ...e, [name]: validateField(name, values[name]) ?? undefined }));
   }
 
@@ -47,7 +59,7 @@ export function LeadForm() {
     event.preventDefault();
     setServerError(null);
 
-    const parsed = leadSchema.safeParse(values);
+    const parsed = leadSchema.safeParse({ ...values, tieneCafeteria });
     if (!parsed.success) {
       const nextErrors: FieldErrors = {};
       for (const issue of parsed.error.issues) {
@@ -55,7 +67,6 @@ export function LeadForm() {
         if (!nextErrors[field]) nextErrors[field] = issue.message;
       }
       setErrors(nextErrors);
-      // Foco al primer campo con error (WCAG focus-management).
       const firstField = Object.keys(nextErrors)[0];
       formRef.current
         ?.querySelector<HTMLElement>(`[name="${firstField}"]`)
@@ -65,19 +76,21 @@ export function LeadForm() {
 
     setStatus("loading");
     try {
-      // Se lee ?ref= recién al enviar (no en el render) para no
-      // depender de useSearchParams()/Suspense — ese boundary
+      // Se lee ?ref= y las UTMs recién al enviar (no en el render) para
+      // no depender de useSearchParams()/Suspense — ese boundary
       // provocaba un bug de streaming SSR en Next 16 que dejaba el
       // formulario huérfano fuera del árbol del DOM.
-      const origen = sanitizeOrigen(
-        new URLSearchParams(window.location.search).get("ref"),
-      );
+      const searchParams = new URLSearchParams(window.location.search);
+      const origen = sanitizeOrigen(searchParams.get("ref"));
+      const utm = extractUtm(searchParams);
+
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...values,
+          ...parsed.data,
           origen,
+          utm,
           sitio_web: honeypotRef.current?.value ?? "",
         }),
       });
@@ -89,6 +102,7 @@ export function LeadForm() {
       };
 
       if (res.ok && data.ok) {
+        track("lead_form_submit");
         setStatus("success");
         return;
       }
@@ -115,12 +129,11 @@ export function LeadForm() {
       >
         <CheckCircle2 className="mx-auto h-12 w-12 text-brand-600" aria-hidden="true" />
         <h3 className="mt-4 font-display text-2xl font-bold text-ink">
-          Recibimos tus datos
+          Recibimos tu solicitud
         </h3>
         <p className="mx-auto mt-3 max-w-md leading-relaxed text-ink-soft">
-          Gracias por contarnos cómo opera tu casino. Vamos a revisar tu caso
-          y te contactaremos pronto por WhatsApp o correo para coordinar la
-          revisión gratuita.
+          Gracias por contarnos sobre tu operación. Te contactaremos pronto
+          por WhatsApp o correo para agendar tu demo.
         </p>
       </div>
     );
@@ -147,22 +160,12 @@ export function LeadForm() {
           onBlur={handleBlur}
         />
         <Field
-          label="Casino / Colegio"
-          name="casinoColegio"
+          label="Empresa / concesionaria"
+          name="empresa"
           autoComplete="organization"
-          placeholder="Nombre del casino o colegio"
-          value={values.casinoColegio}
-          error={errors.casinoColegio}
-          onChange={setValue}
-          onBlur={handleBlur}
-        />
-        <Field
-          label="Ciudad"
-          name="ciudad"
-          autoComplete="address-level2"
-          placeholder="Ej: Santiago"
-          value={values.ciudad}
-          error={errors.ciudad}
+          placeholder="Nombre del casino, colegio o concesionaria"
+          value={values.empresa}
+          error={errors.empresa}
           onChange={setValue}
           onBlur={handleBlur}
         />
@@ -190,15 +193,43 @@ export function LeadForm() {
           error={errors.whatsapp}
           onChange={setValue}
           onBlur={handleBlur}
-          className="sm:col-span-2"
         />
         <Field
-          label="¿Cómo gestionan hoy los pedidos?"
-          name="gestionActual"
+          label="Cantidad de colegios"
+          name="cantidadColegios"
+          type="number"
+          inputMode="numeric"
+          placeholder="1"
+          value={values.cantidadColegios}
+          error={errors.cantidadColegios}
+          onChange={setValue}
+          onBlur={handleBlur}
+        />
+
+        <div className="flex items-end pb-1.5">
+          <label className="flex min-h-12 cursor-pointer items-center gap-3 text-sm font-semibold text-ink">
+            <input
+              type="checkbox"
+              name="tieneCafeteria"
+              checked={tieneCafeteria}
+              onChange={(e) => {
+                markStarted();
+                setTieneCafeteria(e.target.checked);
+                if (e.target.checked) track("cafeteria_interest");
+              }}
+              className="h-5 w-5 shrink-0 rounded border-line text-brand-600 focus:ring-2 focus:ring-brand-500/30"
+            />
+            ¿Tu casino también tiene cafetería?
+          </label>
+        </div>
+
+        <Field
+          label="Mensaje"
+          name="mensaje"
           as="textarea"
-          placeholder="Ej: los apoderados piden por WhatsApp, los pagos se revisan por separado y Cocina recibe una planilla…"
-          value={values.gestionActual}
-          error={errors.gestionActual}
+          placeholder="Cuéntanos brevemente cómo opera hoy tu casino (opcional)"
+          value={values.mensaje}
+          error={errors.mensaje}
           onChange={setValue}
           onBlur={handleBlur}
           className="sm:col-span-2"
@@ -241,7 +272,7 @@ export function LeadForm() {
         ) : (
           <>
             <Send className="h-4.5 w-4.5" aria-hidden="true" />
-            Quiero revisar mi caso
+            Agendar una demo
           </>
         )}
       </button>
@@ -261,15 +292,15 @@ export function LeadForm() {
 
 type FieldProps = {
   label: string;
-  name: LeadFieldName;
+  name: Exclude<LeadFieldName, "tieneCafeteria">;
   value: string;
   error?: string;
-  onChange: (name: LeadFieldName, value: string) => void;
-  onBlur: (name: LeadFieldName) => void;
+  onChange: (name: Exclude<LeadFieldName, "tieneCafeteria">, value: string) => void;
+  onBlur: (name: Exclude<LeadFieldName, "tieneCafeteria">) => void;
   as?: "input" | "textarea";
   type?: string;
   autoComplete?: string;
-  inputMode?: "email" | "tel";
+  inputMode?: "email" | "tel" | "numeric";
   placeholder?: string;
   hint?: string;
   className?: string;
@@ -290,6 +321,7 @@ function Field({
   hint,
   className = "",
 }: FieldProps) {
+  const required = name !== "mensaje";
   const errorId = `${name}-error`;
   const hintId = `${name}-hint`;
   const describedBy =
@@ -303,13 +335,13 @@ function Field({
   return (
     <div className={className}>
       <label htmlFor={name} className="block text-sm font-semibold text-ink">
-        {label} <span className="text-warm-700" aria-hidden="true">*</span>
+        {label} {required && <span className="text-warm-700" aria-hidden="true">*</span>}
       </label>
       {as === "textarea" ? (
         <textarea
           id={name}
           name={name}
-          required
+          required={required}
           rows={4}
           placeholder={placeholder}
           value={value}
@@ -323,8 +355,10 @@ function Field({
         <input
           id={name}
           name={name}
-          required
+          required={required}
           type={type}
+          min={type === "number" ? 1 : undefined}
+          max={type === "number" ? 9 : undefined}
           autoComplete={autoComplete}
           inputMode={inputMode}
           placeholder={placeholder}

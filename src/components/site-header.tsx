@@ -9,17 +9,14 @@ export function SiteHeader() {
         </a>
 
         <nav aria-label="Navegacion principal" className="site-nav">
-          <a href="#plataforma">Plataforma</a>
-          <a href="#inversion">Inversion</a>
+          <a href="#como-funciona">Cómo funciona</a>
+          <a href="#planes">Planes</a>
           <a href="/demo?ref=nav">Demo</a>
         </nav>
 
         <nav aria-label="Acciones principales" className="header-actions">
-          <a href="#contacto" className="header-link">
-            Consulta directa
-          </a>
           <a href="#contacto" className="header-cta">
-            Conversemos
+            Agendar una demo
           </a>
         </nav>
       </div>

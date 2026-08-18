@@ -1,51 +1,74 @@
+"use client";
+
+import { motion, useReducedMotion } from "motion/react";
+
 const faqs = [
   [
-    "¿Es una plataforma estándar o un desarrollo desde cero?",
-    "Es un trabajo a medida sobre una base modular. No partimos de una hoja en blanco ni imponemos un sistema cerrado: conversamos tu operación, elegimos los módulos necesarios y configuramos reglas, accesos, pagos, reportes e implementación según tu realidad.",
+    "¿EnBandeja es un desarrollo a medida?",
+    "EnBandeja no se arma desde cero para cada colegio: partimos de una plataforma ya probada que personalizamos según tu operación — y si necesitas algo muy puntual fuera de eso, se conversa aparte. Por eso la primera versión puede estar lista en días, no meses.",
   ],
   [
-    "¿Cómo se procesan los pagos?",
-    "La plataforma se conecta con la pasarela acordada para cada cliente. En la demo solo se representa una respuesta ficticia aprobada; no hay cobros reales.",
+    "¿Cobran comisión por cada pago?",
+    "EnBandeja no cobra comisión por transacción. La pasarela de pago mantiene sus propios costos y comisiones.",
   ],
   [
-    "¿Las familias necesitan crear una cuenta?",
-    "No necesariamente. El acceso puede configurarse con cuenta, código, OTP, integración o un recorrido directo, según la realidad del establecimiento.",
+    "¿Cómo se paga la implementación?",
+    "50% al inicio y 50% al pasar a producción.",
   ],
   [
-    "¿Cómo se registra la entrega?",
-    "Puede configurarse con QR, ticket impreso, búsqueda, listados o el método que ya utiliza tu equipo.",
+    "¿Cuánto tarda la implementación?",
+    "Para un colegio, la puesta en marcha estándar apunta a 7–10 días hábiles desde que contamos con la información y accesos necesarios. Una operación multicolegio puede requerir más tiempo.",
   ],
   [
-    "¿Cómo se define el precio?",
-    "Depende de los módulos, la implementación y el acompañamiento posterior. Puede trabajarse con implementación más mensualidad, o con un pago único y entrega acordada si quieres mantener la solución en tus manos.",
+    "¿Necesito instalar algo o comprar hardware?",
+    "No. Es una plataforma web. La entrega puede hacerse con QR desde el celular, ticket impreso, búsqueda manual u otro método — sin hardware adicional en el producto base.",
   ],
   [
-    "¿La demo muestra el producto definitivo?",
-    "La demo permite recorrer un caso ficticio y entender el ciclo. Los módulos, reglas, datos e integraciones se definen con cada cliente.",
+    "¿Se integra con el sistema que ya usa el colegio?",
+    "No por defecto. Si tu operación necesita una integración específica, se evalúa y cotiza aparte.",
+  ],
+  [
+    "¿Incluye soporte?",
+    "Sí. La mensualidad incluye hosting, base de datos, respaldos, mantenimiento, soporte técnico y corrección de incidencias.",
+  ],
+  [
+    "¿Dónde se alojan los datos y qué tan seguros están?",
+    "Tus datos se alojan en infraestructura en la nube, con respaldos periódicos para mantenerlos íntegros y disponibles. Los pagos se procesan a través de la pasarela que elijas — no quedan almacenados en nuestros servidores.",
+  ],
+  [
+    "¿Hay permanencia mínima o puedo dejar de usar EnBandeja cuando quiera?",
+    "No hay permanencia mínima: puedes dejar de operar en EnBandeja cuando lo necesites — lo que se detiene es la mensualidad del servicio. La plataforma y su código siguen siendo parte del producto EnBandeja.",
   ],
 ];
 
 export function FaqSection() {
+  const reduced = useReducedMotion();
+
   return (
-    <section className="bg-surface py-20 md:py-28">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
-        <p className="eyebrow">Preguntas frecuentes</p>
-        <h2 className="mt-5 font-display text-3xl font-bold leading-tight text-ink sm:text-5xl">
-          Lo importante, antes de conversar.
-        </h2>
-        <div className="mt-10 divide-y divide-line border-y border-line">
-          {faqs.map(([q, a]) => (
-            <details key={q} className="group py-5">
-              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-ink">
-                {q}
-                <span className="text-2xl font-normal text-brand-600 transition-transform group-open:rotate-45">
-                  +
-                </span>
+    <section className="faq-section-v2">
+      <div className="section-shell" style={{ maxWidth: "50rem", marginInline: "auto" }}>
+        <div className="section-heading">
+          <p className="eyebrow">Preguntas frecuentes</p>
+          <h2>Lo importante, antes de conversar.</h2>
+        </div>
+        <div className="faq-list">
+          {faqs.map(([q, a], index) => (
+            <motion.details
+              key={q}
+              className="faq-item"
+              initial={reduced ? false : { opacity: 0, y: 16 }}
+              whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.4, delay: (index % 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <summary>
+                <div className="faq-item-row">
+                  {q}
+                  <span className="plus">+</span>
+                </div>
               </summary>
-              <p className="max-w-3xl pb-2 pr-10 leading-relaxed text-ink-soft">
-                {a}
-              </p>
-            </details>
+              <p>{a}</p>
+            </motion.details>
           ))}
         </div>
       </div>

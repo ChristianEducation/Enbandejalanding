@@ -254,6 +254,7 @@ export function DemoExperience() {
             <span><strong>Colegio Modelo EnBandeja</strong><small>Casino Escolar Demo</small></span>
           </div>
           <Status tone="new">Demo · flujo configurable</Status>
+          <Status tone="success">Incluido en EnBandeja Almuerzos</Status>
           <div className={styles.headerActions}>
             <button type="button" className={styles.textButton} onClick={() => setState((current) => ({ ...current, guideVisible: true }))}>
               <HelpCircle aria-hidden="true" /> Cómo recorrerla

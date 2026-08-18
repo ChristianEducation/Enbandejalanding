@@ -24,16 +24,17 @@ export async function notifyNewLead(lead: LeadData & { origen: string }): Promis
     await resend.emails.send({
       from,
       to,
-      subject: `Nuevo lead: ${lead.casinoColegio} (${lead.ciudad})`,
+      subject: `Nuevo lead: ${lead.empresa}`,
       html: `
         <h2>Nuevo lead desde la landing</h2>
         <table cellpadding="6" style="border-collapse:collapse;font-family:sans-serif;font-size:14px">
           <tr><td><b>Nombre</b></td><td>${esc(lead.nombre)}</td></tr>
-          <tr><td><b>Casino / Colegio</b></td><td>${esc(lead.casinoColegio)}</td></tr>
-          <tr><td><b>Ciudad</b></td><td>${esc(lead.ciudad)}</td></tr>
+          <tr><td><b>Empresa / concesionaria</b></td><td>${esc(lead.empresa)}</td></tr>
           <tr><td><b>Email</b></td><td>${esc(lead.email)}</td></tr>
           <tr><td><b>WhatsApp</b></td><td>${esc(lead.whatsapp)}</td></tr>
-          <tr><td><b>Gestión actual</b></td><td>${esc(lead.gestionActual)}</td></tr>
+          <tr><td><b>Cantidad de colegios</b></td><td>${lead.cantidadColegios}</td></tr>
+          <tr><td><b>¿Tiene cafetería?</b></td><td>${lead.tieneCafeteria ? "Sí" : "No"}</td></tr>
+          <tr><td><b>Mensaje</b></td><td>${lead.mensaje ? esc(lead.mensaje) : "—"}</td></tr>
           <tr><td><b>Origen</b></td><td>${esc(lead.origen)}</td></tr>
         </table>
       `,

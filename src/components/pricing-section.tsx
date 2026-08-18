@@ -1,44 +1,76 @@
 "use client";
 
-import { Boxes, CalendarClock, Handshake, LifeBuoy, WalletCards } from "lucide-react";
+import { ArrowRight, CalendarClock, Check, ChefHat, Layers3, WalletCards } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
+import { track } from "@/lib/analytics";
 
-const items = [
+const modalidades = [
   {
-    icon: Boxes,
-    title: "Modulos",
-    text: "Portal para familias, cocina, administracion, pagos, reportes, POS, kiosco o integraciones segun lo que tu operacion necesita.",
+    id: "almuerzos",
+    nombre: "EnBandeja Almuerzos",
+    implementacion: "$690.000",
+    mensualidad: "$119.000",
+    cobertura: "1 colegio",
+    texto: "Digitaliza el circuito completo del almuerzo en un solo colegio.",
+    features: {
+      items: [
+        "Portal de apoderados mobile first",
+        "Pago online integrado",
+        "Cocina, entrega y anulaciones",
+        "Administración, reportes y exportación",
+      ],
+    },
   },
   {
-    icon: Handshake,
-    title: "Implementacion",
-    text: "Levantamiento, configuracion, ajustes, pruebas con tu equipo y puesta en marcha acompanada.",
+    id: "cafeteria",
+    nombre: "EnBandeja + Cafetería",
+    implementacion: "$890.000",
+    mensualidad: "$139.000",
+    cobertura: "1 colegio",
+    texto: "Para colegios que además administran venta anticipada de cafetería.",
+    features: {
+      leadIn: "Todo lo de EnBandeja Almuerzos, más:",
+      items: [
+        "Catálogo de productos de cafetería",
+        "Compra anticipada para recreos u horarios",
+        "Control de preparación y entrega",
+      ],
+    },
+    event: "cafeteria_interest" as const,
   },
   {
-    icon: LifeBuoy,
-    title: "Continuidad",
-    text: "Soporte, mejoras, nuevos flujos y acompanamiento posterior si prefieres mantener una evolucion mensual.",
+    id: "multicolegio",
+    nombre: "EnBandeja Multicolegio",
+    implementacion: "$1.190.000",
+    mensualidad: "$179.000",
+    cobertura: "2 colegios",
+    texto: "Para concesionarias que operan más de un colegio.",
+    features: {
+      leadIn: "Todo lo de EnBandeja Almuerzos, más:",
+      items: [
+        "Datos y operación separados por colegio",
+        "Panel consolidado para el operador",
+        "Reportes por colegio y visión general",
+      ],
+    },
+    event: "multicolegio_interest" as const,
   },
 ];
 
-const options = [
-  {
-    title: "Implementacion + mensualidad",
-    text: "Para operar con soporte, ajustes continuos y evolucion del sistema en el tiempo.",
-  },
-  {
-    title: "Pago unico y entrega",
-    text: "Para proyectos donde prefieres dejar la solucion en tus manos, con alcances acordados desde el inicio.",
-  },
+const mensualidadIncluye = [
+  "Hosting y base de datos",
+  "Respaldos y monitoreo",
+  "Soporte técnico e incidencias",
+  "Mantenimiento y actualizaciones",
+  "Subdominio de operación",
 ];
 
 export function PricingSection() {
   const reduced = useReducedMotion();
   const revealY = reduced ? 0 : 26;
-  const revealX = reduced ? 0 : 24;
 
   return (
-    <section id="inversion" className="pricing-section">
+    <section id="planes" className="pricing-section">
       <div className="section-shell pricing-grid">
         <motion.div
           className="pricing-copy"
@@ -47,12 +79,13 @@ export function PricingSection() {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="eyebrow">Inversion flexible</p>
-          <h2>Se conversa, se define y se cotiza segun tu operacion.</h2>
+          <p className="eyebrow">Inversión flexible</p>
+          <h2>Elige la modalidad que corresponde a tu operación.</h2>
           <p>
-            No vendemos un plan cerrado. Primero entendemos como funciona tu
-            casino, que modulos conviene activar y que nivel de soporte necesitas
-            despues de la puesta en marcha.
+            La modalidad no depende de qué funciones premium quieres, sino de
+            cómo opera tu casino: un colegio con almuerzos, un colegio con
+            almuerzos y cafetería, o una concesionaria con más de un colegio.
+            Sin comisión de EnBandeja por transacción.
           </p>
           <motion.div
             className="pricing-promise"
@@ -63,8 +96,8 @@ export function PricingSection() {
           >
             <CalendarClock aria-hidden="true" />
             <div>
-              <strong>7 dias habiles</strong>
-              <span>Construccion, implementacion y comienzo de marcha blanca.</span>
+              <strong>7–10 días hábiles</strong>
+              <span>Para un colegio, desde antecedentes y credenciales completas.</span>
             </div>
           </motion.div>
         </motion.div>
@@ -79,26 +112,21 @@ export function PricingSection() {
           <div className="pricing-panel-head">
             <WalletCards aria-hidden="true" />
             <div>
-              <strong>Dos formas de trabajarlo</strong>
-              <span>Mensualidad o pago unico, segun el acuerdo.</span>
+              <strong>Qué incluye la mensualidad</strong>
+              <span>Además del módulo de tu modalidad</span>
             </div>
           </div>
 
           <div className="pricing-options">
-            {options.map((option, index) => (
+            {mensualidadIncluye.map((item, index) => (
               <motion.article
-                key={option.title}
-                initial={reduced ? false : { opacity: 0, x: index % 2 === 0 ? revealX : -revealX, y: 18, rotate: index % 2 === 0 ? 1 : -1 }}
-                whileInView={reduced ? undefined : { opacity: 1, x: 0, y: 0, rotate: 0 }}
+                key={item}
+                initial={reduced ? false : { opacity: 0, y: 12 }}
+                whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
-                transition={{
-                  duration: 0.42,
-                  delay: index * 0.08,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
+                transition={{ duration: 0.36, delay: index * 0.05 }}
               >
-                <span>{option.title}</span>
-                <p>{option.text}</p>
+                <span>{item}</span>
               </motion.article>
             ))}
           </div>
@@ -106,21 +134,48 @@ export function PricingSection() {
       </div>
 
       <div className="section-shell pricing-items">
-        {items.map(({ icon: Icon, title, text }, index) => (
+        {modalidades.map(({ id, nombre, implementacion, mensualidad, cobertura, texto, features, event }, index) => (
           <motion.article
-            key={title}
+            key={id}
             initial={reduced ? false : { opacity: 0, y: 42, x: index === 1 ? 0 : index === 0 ? -28 : 28, rotate: index === 1 ? 0 : index === 0 ? -1.6 : 1.6, scale: 0.96 }}
             whileInView={reduced ? undefined : { opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.35 }}
-            transition={{
-              duration: 0.42,
-              delay: index * 0.08,
-              ease: [0.22, 1, 0.36, 1],
-            }}
+            transition={{ duration: 0.42, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            onViewportEnter={index === 0 ? () => track("pricing_view") : undefined}
+            onMouseEnter={event ? () => track(event) : undefined}
           >
-            <Icon aria-hidden="true" />
-            <h3>{title}</h3>
-            <p>{text}</p>
+            {id === "multicolegio" ? (
+              <Layers3 aria-hidden="true" />
+            ) : id === "cafeteria" ? (
+              <ChefHat aria-hidden="true" />
+            ) : (
+              <WalletCards aria-hidden="true" />
+            )}
+            <h3>{nombre}</h3>
+            <p>{texto}</p>
+            <p className="pricing-item-coverage">{cobertura}</p>
+
+            <div className="pricing-card-price">
+              <strong>{mensualidad}</strong>
+              <span>/mes</span>
+            </div>
+            <p className="pricing-card-implementation">
+              + <strong>{implementacion}</strong> implementación (pago único)
+            </p>
+
+            <ul className="pricing-card-features">
+              {features.leadIn && <li className="is-lead-in">{features.leadIn}</li>}
+              {features.items.map((item) => (
+                <li key={item}>
+                  <Check aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <a href="#contacto" className="pricing-item-cta">
+              Conversemos de esta modalidad <ArrowRight aria-hidden="true" />
+            </a>
           </motion.article>
         ))}
       </div>

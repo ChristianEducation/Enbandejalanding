@@ -14,6 +14,18 @@ function hashIp(request: NextRequest): string | null {
   return createHash("sha256").update(`${salt}${ip}`).digest("hex");
 }
 
+/** UTMs ya vienen filtradas por extractUtm() en el cliente; acá solo se
+ * valida la forma antes de guardarlas como jsonb. */
+function sanitizeUtm(value: unknown): Record<string, string> | null {
+  if (!value || typeof value !== "object") return null;
+  const out: Record<string, string> = {};
+  for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+    if (!/^utm_(source|medium|campaign|content)$/.test(key)) continue;
+    if (typeof raw === "string" && raw.trim()) out[key] = raw.trim().slice(0, 200);
+  }
+  return Object.keys(out).length > 0 ? out : null;
+}
+
 export async function POST(request: NextRequest) {
   let body: unknown;
   try {
@@ -47,6 +59,7 @@ export async function POST(request: NextRequest) {
 
   const lead = parsed.data;
   const origen = sanitizeOrigen(raw.origen);
+  const utm = sanitizeUtm(raw.utm);
   const ipHash = hashIp(request);
   const prisma = getPrisma();
 
@@ -75,13 +88,15 @@ export async function POST(request: NextRequest) {
     const saved = await prisma.lead.create({
       data: {
         nombre: lead.nombre,
-        casinoColegio: lead.casinoColegio,
-        ciudad: lead.ciudad,
+        empresa: lead.empresa,
         email: lead.email,
         whatsapp: lead.whatsapp,
-        gestionActual: lead.gestionActual,
+        cantidadColegios: lead.cantidadColegios,
+        tieneCafeteria: lead.tieneCafeteria,
+        mensaje: lead.mensaje || null,
         origen,
         ipHash,
+        utmJson: utm ?? undefined,
       },
       select: { id: true },
     });

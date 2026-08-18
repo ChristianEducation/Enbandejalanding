@@ -13,17 +13,19 @@ datasource db {
 }
 
 model Lead {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  nombre        String
-  casinoColegio String   @map("casino_colegio")
-  ciudad        String
-  email         String
-  whatsapp      String
-  gestionActual String   @map("gestion_actual")
-  origen        String   @default("landing-enbandeja")
-  estado        String   @default("nuevo")
-  ipHash        String?  @map("ip_hash")
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  nombre           String
+  empresa          String
+  email            String
+  whatsapp         String
+  cantidadColegios Int      @default(1) @map("cantidad_colegios")
+  tieneCafeteria   Boolean  @default(false) @map("tiene_cafeteria")
+  mensaje          String?
+  origen           String   @default("landing-enbandeja")
+  estado           String   @default("nuevo")
+  ipHash           String?  @map("ip_hash")
+  utmJson          Json?    @map("utm_json")
 
   @@index([email, createdAt(sort: Desc)], map: "leads_email_created_at_idx")
   @@index([ipHash, createdAt(sort: Desc)], map: "leads_ip_hash_created_at_idx")

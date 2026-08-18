@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { track } from "@/lib/analytics";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -29,14 +30,14 @@ export function Hero() {
       <div className="hero-v2-grid">
         <div className="hero-v2-copy">
           <motion.p {...enter(0)} className="eyebrow">
-            Plataforma para alimentacion escolar
+            Para casinos escolares y concesionarias
           </motion.p>
           <motion.h1 {...enter(0.08)}>
-            Toda tu operacion, <em>conectada</em> con calma.
+            El casino escolar, <em>en un solo lugar</em>.
           </motion.h1>
           <motion.p {...enter(0.16)} className="hero-v2-lead">
-            EnBandeja conecta familias, cocina, administracion y finanzas en
-            una plataforma modular que se configura alrededor de tu operacion.
+            Centraliza pedidos, pagos, cocina y entregas en una plataforma
+            configurada a tu forma de operar.
           </motion.p>
           <motion.div {...enter(0.24)} className="hero-v2-actions">
             <motion.a
@@ -44,26 +45,24 @@ export function Hero() {
               className="button-primary"
               whileHover={reduced ? undefined : { y: -3, scale: 1.025 }}
               whileTap={reduced ? undefined : { scale: 0.97 }}
+              onClick={() => track("hero_demo_click")}
             >
-              Conversemos sobre tu operacion <ArrowRight aria-hidden="true" />
+              Agendar una demo <ArrowRight aria-hidden="true" />
             </motion.a>
             <motion.a
-              href="#plataforma"
+              href="#planes"
               className="button-secondary"
               whileHover={reduced ? undefined : { y: -3, scale: 1.02 }}
               whileTap={reduced ? undefined : { scale: 0.97 }}
+              onClick={() => track("hero_plans_click")}
             >
-              Ver como se organiza
+              Ver planes
             </motion.a>
           </motion.div>
           <motion.p {...enter(0.32)} className="hero-v2-proof">
-            Pensado para equipos que necesitan ordenar pedidos, cocina y pagos
-            sin transformar su dia a dia en un sistema complejo.
+            Sin comisión de EnBandeja por transacción · Implementación
+            acompañada · Para casinos escolares y concesionarias
           </motion.p>
-          <motion.div {...enter(0.4)} className="hero-promise">
-            <strong>7 dias habiles</strong>
-            <span>Construccion, implementacion y comienzo de marcha blanca.</span>
-          </motion.div>
         </div>
 
         <motion.div
